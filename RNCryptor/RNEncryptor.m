@@ -131,6 +131,8 @@
   }
 
   dispatch_async(self.queue, ^{
+      if (self.isFinished)
+          return;
     if (!self.haveWrittenHeader) {
       NSData *header = [self header];
       [self.outData setData:header];
@@ -152,7 +154,8 @@
     [self.outData appendData:encryptedData];
 
     dispatch_sync(self.responseQueue, ^{
-      self.handler(self, self.outData);
+        if (self.handler)
+            self.handler(self, self.outData);
     });
     [self.outData setLength:0];
   });
@@ -165,6 +168,9 @@
   }
 
   dispatch_async(self.queue, ^{
+      if (self.isFinished)
+          return;
+
     NSError *error = nil;
     NSData *encryptedData = [self.engine finishWithError:&error];
     [self.outData appendData:encryptedData];
