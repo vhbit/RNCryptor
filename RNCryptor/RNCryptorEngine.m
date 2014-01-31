@@ -67,6 +67,9 @@
   if (__cryptor) {
     CCCryptorRelease(__cryptor);
   }
+#if !defined(__has_feature) || !__has_feature(objc_arc)
+  [super dealloc];
+#endif
 }
 
 - (NSData *)addData:(NSData *)data error:(NSError **)error

@@ -48,19 +48,26 @@
 
 + (NSData *)encryptData:(NSData *)thePlaintext withSettings:(RNCryptorSettings)theSettings password:(NSString *)aPassword error:(NSError **)anError
 {
-  RNEncryptor *cryptor = [[self alloc] initWithSettings:theSettings
+    //NSLog(@"Starting new encryption %lu, %x", thePlaintext.length, thePlaintext);
+    RNEncryptor *cryptor = [[self alloc] initWithSettings:theSettings
                                                password:aPassword
                                                 handler:^(RNCryptor *c, NSData *d) {}];
-  return [self synchronousResultForCryptor:cryptor data:thePlaintext error:anError];
+    NSData *result = [self synchronousResultForCryptor:cryptor data:thePlaintext error:anError];
+    [cryptor release];
+
+    return result;
 }
 
 + (NSData *)encryptData:(NSData *)thePlaintext withSettings:(RNCryptorSettings)theSettings encryptionKey:(NSData *)anEncryptionKey HMACKey:(NSData *)anHMACKey error:(NSError **)anError
 {
-  RNEncryptor *cryptor = [[self alloc] initWithSettings:theSettings
-                                          encryptionKey:anEncryptionKey
-                                                HMACKey:anHMACKey
-                                                handler:^(RNCryptor *c, NSData *d) {}];
-  return [self synchronousResultForCryptor:cryptor data:thePlaintext error:anError];
+    RNEncryptor *cryptor = [[self alloc] initWithSettings:theSettings
+                                            encryptionKey:anEncryptionKey
+                                                  HMACKey:anHMACKey
+                                                  handler:^(RNCryptor *c, NSData *d) {
+                                                  }];
+    NSData *result = [self synchronousResultForCryptor:cryptor data:thePlaintext error:anError];
+    [cryptor release];
+    return result;
 }
 
 - (RNEncryptor *)initWithSettings:(RNCryptorSettings)theSettings encryptionKey:(NSData *)anEncryptionKey HMACKey:(NSData *)anHMACKey handler:(RNCryptorHandler)aHandler

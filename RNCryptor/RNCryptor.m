@@ -81,6 +81,13 @@ const uint8_t kRNCryptorFileVersion = 2;
 
   dispatch_queue_t queue = dispatch_queue_create("net.robnapier.RNEncryptor.response", DISPATCH_QUEUE_SERIAL);
   cryptor.responseQueue = queue;
+
+#if !OS_OBJECT_USE_OBJC
+  if (queue) {
+    dispatch_release(queue);
+  }
+#endif
+
   [cryptor addData:inData];
   [cryptor finish];
 
@@ -89,9 +96,6 @@ const uint8_t kRNCryptorFileVersion = 2;
 
 #if !OS_OBJECT_USE_OBJC
   dispatch_release(sem);
-  if (queue) {
-    dispatch_release(queue);
-  }
 #endif
 
   if (returnedError) {
@@ -396,6 +400,10 @@ static int RN_SecRandomCopyBytes(void *rnd, size_t count, uint8_t *bytes) {
 #endif
     _queue = NULL;
   }
+    
+#if !defined(__has_feature) || !__has_feature(objc_arc)
+    [super dealloc];
+#endif
 }
 
 - (void)setResponseQueue:(dispatch_queue_t)aResponseQueue
